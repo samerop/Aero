@@ -1,12 +1,13 @@
-UI = {}
-UI.connections = {}
-UI.connectionCount = 0
+local UI = {}
+local connections = {}
+local connectionCount = 0
+
 local CoreGui = game:GetService("CoreGui")
 local UIS = game:GetService("UserInputService")
 
-function add()
-	UI.connectionCount += 1
-	return UI.connectionCount
+local function add()
+	connectionCount += 1
+	return connectionCount
 end
 
 function UI:CreateWindow(c)
@@ -21,35 +22,28 @@ function UI:CreateWindow(c)
 	local setting =  Instance.new("ImageButton")
 	settingsFrame = Instance.new("Frame")
 	local uill_settings = Instance.new("UIListLayout")
-	local K_Frame = Instance.new("Frame")
-	local K_TextLabel = Instance.new("TextLabel")
-	local K_Trigger = Instance.new("TextButton")
+	local togFrame = Instance.new("Frame")
+	local togTextLabel = Instance.new("TextLabel")
+	local togTrigger = Instance.new("TextButton")
 	local destroyAero = Instance.new("TextButton")
-	local keyBind = Enum.KeyCode.LeftControl
+	local keybind = Enum.KeyCode.LeftControl
 
-	local min_max = Instance.new("ImageButton")
+	local minMax = Instance.new("ImageButton")
 
-	screenGui.Name = "Aero"	
+	screenGui.Name = "Aero"
 	screenGui.ResetOnSpawn = false
 	screenGui.IgnoreGuiInset = true
 	screenGui.Parent = CoreGui
 
-	frame.BackgroundColor3 = Color3.fromRGB(37, 37, 37)
+	frame.BackgroundColor3 = Color3.fromRGB(31, 31, 31)
 	frame.BorderSizePixel = 0
 	frame.ClipsDescendants = true
 	frame.Position = UDim2.new(0.375, 0, 0.375, 0)
 	frame.Size = UDim2.new(0.25, 0, 0.25, 0)
 	frame.Parent = screenGui
 
-	UI.connections[add()] = UIS.InputBegan:Connect(function(input)
-		if input.KeyCode == keyBind then
-			frame.Visible = not frame.Visible
-		end
-	end)
-
 	title.BackgroundColor3 = Color3.fromRGB(21, 21, 21)
 	title.BorderSizePixel = 0
-
 	title.Name = "Title"
 	title.Size = UDim2.new(1, 0, 0.1, 0)
 	title.Font = Enum.Font.SourceSans
@@ -60,7 +54,7 @@ function UI:CreateWindow(c)
 	title.TextScaled = true
 	title.Parent = frame
 
-	settingsFrame.BackgroundColor3 = Color3.fromRGB(37, 37, 37)
+	settingsFrame.BackgroundColor3 = Color3.fromRGB(31, 31, 31)
 	settingsFrame.BorderSizePixel = 0
 	settingsFrame.Position = UDim2.new(0.2, 0, 0.1, 0)
 	settingsFrame.Size = UDim2.new(0.8, 0, 0.9, 0)
@@ -72,56 +66,56 @@ function UI:CreateWindow(c)
 	uill_settings.SortOrder = Enum.SortOrder.LayoutOrder
 	uill_settings.Parent = settingsFrame
 
-	K_Frame.BackgroundTransparency = 1
-	K_Frame.Name = "ToggleAero"
-	K_Frame.BorderSizePixel = 0
-	K_Frame.Size = UDim2.new(1, 0, 0.2, 0)
-	K_Frame.Parent = settingsFrame
+	togFrame.BackgroundTransparency = 1
+	togFrame.Name = "ToggleAero"
+	togFrame.BorderSizePixel = 0
+	togFrame.Size = UDim2.new(1, 0, 0.2, 0)
+	togFrame.Parent = settingsFrame
 
-	K_TextLabel.BackgroundColor3 = Color3.fromRGB(48, 48, 48)
-	K_TextLabel.Name = "ToggleAero"
-	K_TextLabel.BorderSizePixel = 0
-	K_TextLabel.RichText = true
-	K_TextLabel.TextStrokeTransparency = 0
-	K_TextLabel.Size = UDim2.new(0.75, 0, 1, 0)
-	K_TextLabel.Font = Enum.Font.SourceSans
-	K_TextLabel.Text = "Toggle Aero"
-	K_TextLabel.TextColor3 = Color3.new(1, 1, 1)
-	K_TextLabel.TextScaled = true
-	K_TextLabel.Parent = K_Frame
+	togTextLabel.BackgroundColor3 = Color3.fromRGB(51, 51, 51)
+	togTextLabel.Name = "ToggleAero"
+	togTextLabel.BorderSizePixel = 0
+	togTextLabel.RichText = true
+	togTextLabel.TextStrokeTransparency = 0
+	togTextLabel.Size = UDim2.new(0.75, 0, 1, 0)
+	togTextLabel.Font = Enum.Font.SourceSans
+	togTextLabel.Text = "Toggle Aero"
+	togTextLabel.TextColor3 = Color3.new(1, 1, 1)
+	togTextLabel.TextScaled = true
+	togTextLabel.Parent = togFrame
 
-	local connection = nil
-	K_Trigger.BackgroundColor3 = Color3.fromRGB(32, 32, 32)
-	K_Trigger.BorderSizePixel = 0
-	K_Trigger.Name = "Trigger"
-	K_Trigger.RichText = true
-	K_Trigger.TextStrokeTransparency = 0
-	K_Trigger.Position = UDim2.new(0.75, 0, 0, 0)
-	K_Trigger.Size = UDim2.new(0.25, 0, 1, 0)
-	K_Trigger.Font = Enum.Font.SourceSans
-	K_Trigger.Text = "LeftControl"
-	K_Trigger.TextColor3 = Color3.new(1, 1, 1)
-	K_Trigger.TextScaled = true
-	K_Trigger.MouseButton1Down:Connect(function()
-		if connection then
+	local connectionName = "togTrigger_" .. add()
+	togTrigger.BackgroundColor3 = Color3.fromRGB(41, 41, 41)
+	togTrigger.BorderSizePixel = 0
+	togTrigger.Name = "Trigger"
+	togTrigger.RichText = true
+	togTrigger.TextStrokeTransparency = 0
+	togTrigger.Position = UDim2.new(0.75, 0, 0, 0)
+	togTrigger.Size = UDim2.new(0.25, 0, 1, 0)
+	togTrigger.Font = Enum.Font.SourceSans
+	togTrigger.Text = "LeftControl"
+	togTrigger.TextColor3 = Color3.new(1, 1, 1)
+	togTrigger.TextScaled = true
+	togTrigger.MouseButton1Down:Connect(function()
+		if connections[connectionName] then
 			return
 		else
-			K_Trigger.Text = "..."
-			connection = UIS.InputBegan:Connect(function(input)
+			togTrigger.Text = "..."
+			connections[connectionName] = UIS.InputBegan:Connect(function(input)
 				if input.UserInputType == Enum.UserInputType.Keyboard then
-					connection:Disconnect()
-					connection = nil
-					K_Trigger.Text = input.KeyCode.Name
+					connections[connectionName]:Disconnect()
+					connections[connectionName] = nil
+					togTrigger.Text = input.KeyCode.Name
 					task.wait()
-					keyBind = input.KeyCode
+					keybind = input.KeyCode
 				end
 			end)
 		end
 	end)
-	K_Trigger.Parent = K_Frame
-	
+	togTrigger.Parent = togFrame
+
 	local areyousure = nil
-	destroyAero.BackgroundColor3 = Color3.fromRGB(48, 48, 48)
+	destroyAero.BackgroundColor3 = Color3.fromRGB(51, 51, 51)
 	destroyAero.Name = "DestroyAero"
 	destroyAero.BorderSizePixel = 0
 	destroyAero.RichText = true
@@ -135,20 +129,17 @@ function UI:CreateWindow(c)
 		if not areyousure then
 			areyousure = true
 			destroyAero.Text = "<font color='#ff0000'>Are you sure?</font>"
-			task.spawn(function()
-				task.wait(3)
+			task.delay(2, function()
 				areyousure = nil
 				destroyAero.Text = "Destroy Aero"
 			end)
-			return
 		else
-			for _, v in pairs(UI.connections) do
+			for _, v in pairs(connections) do
 				v:Disconnect()
 				v = nil
 			end
-			areyousure = nil
+			frame.Parent:Destroy()
 		end
-		frame.Parent:Destroy()
 	end)
 	destroyAero.Parent = settingsFrame
 
@@ -176,17 +167,17 @@ function UI:CreateWindow(c)
 
 	local minIcon = "rbxasset://textures/MenuBar/icon_minimize.png"
 	local maxIcon = "rbxasset://textures/MenuBar/icon_maximize.png"
-	min_max.Image = minIcon
-	min_max.Name = "Minimize"
-	min_max.AutoButtonColor = false
-	min_max.BorderSizePixel = 0
-	min_max.Size = UDim2.new(0.05, 0, 1, 0)
-	min_max.Position = UDim2.new(0.9, 0, 0, 0)
-	min_max.ScaleType = Enum.ScaleType.Fit
-	min_max.BackgroundColor3 = Color3.fromRGB(21, 21, 21)
-	min_max.MouseButton1Down:Connect(function()
-		if min_max.Image == minIcon then
-			min_max.Image = maxIcon
+	minMax.Image = minIcon
+	minMax.Name = "MinMax"
+	minMax.AutoButtonColor = false
+	minMax.BorderSizePixel = 0
+	minMax.Size = UDim2.new(0.05, 0, 1, 0)
+	minMax.Position = UDim2.new(0.9, 0, 0, 0)
+	minMax.ScaleType = Enum.ScaleType.Fit
+	minMax.BackgroundColor3 = Color3.fromRGB(21, 21, 21)
+	minMax.MouseButton1Down:Connect(function()
+		if minMax.Image == minIcon then
+			minMax.Image = maxIcon
 			setting.BackgroundTransparency = 1
 			setting.ImageTransparency =  1
 			setting.Interactable = false
@@ -197,7 +188,7 @@ function UI:CreateWindow(c)
 			title.TextTransparency = 1
 			title.BackgroundTransparency = 1
 		else
-			min_max.Image = minIcon
+			minMax.Image = minIcon
 			setting.BackgroundTransparency = 0
 			setting.ImageTransparency = 0
 			setting.Interactable = true
@@ -208,7 +199,7 @@ function UI:CreateWindow(c)
 			title.BackgroundTransparency = 0
 		end
 	end)
-	min_max.Parent = title
+	minMax.Parent = title
 
 	uipl.Animated = false
 	uipl.Parent = elemFrame
@@ -229,12 +220,18 @@ function UI:CreateWindow(c)
 	uill.SortOrder = Enum.SortOrder.LayoutOrder
 	uill.Parent = tabFrame
 
+	connections[add()] = UIS.InputBegan:Connect(function(input)
+		if input.KeyCode == keybind then
+			frame.Visible = not frame.Visible
+		end
+	end)
+
 	if c.Draggable then
 		local dragStartMousePosition = nil
 		local startFramePosition = nil
 		local isDragging = false
 
-		UI.connections[add()] = title.InputBegan:Connect(function(input)
+		connections[add()] = title.InputBegan:Connect(function(input)
 			if input.UserInputType == Enum.UserInputType.MouseButton1 then
 				isDragging = true
 				dragStartMousePosition = input.Position
@@ -242,7 +239,7 @@ function UI:CreateWindow(c)
 			end
 		end)
 
-		UI.connections[add()] = UIS.InputChanged:Connect(function(input)
+		connections[add()] = UIS.InputChanged:Connect(function(input)
 			if isDragging and input.UserInputType == Enum.UserInputType.MouseMovement then
 				local delta = input.Position - dragStartMousePosition
 				frame.Position = UDim2.new(
@@ -252,7 +249,7 @@ function UI:CreateWindow(c)
 			end
 		end)
 
-		UI.connections[add()] = UIS.InputEnded:Connect(function(input)
+		connections[add()] = UIS.InputEnded:Connect(function(input)
 			if isDragging and input.UserInputType == Enum.UserInputType.MouseButton1 then
 				isDragging = false
 				dragStartMousePosition = nil
@@ -267,7 +264,7 @@ function UI:CreateTab(c)
 	local sf = Instance.new("ScrollingFrame")
 	local uill = Instance.new("UIListLayout")
 
-	tabButton.BackgroundColor3 = Color3.fromRGB(32, 32, 32)
+	tabButton.BackgroundColor3 = Color3.fromRGB(41, 41, 41)
 	tabButton.BorderSizePixel = 0
 	tabButton.Name = c.Name
 	tabButton.RichText = true
@@ -308,7 +305,7 @@ end
 function UI:CreateButton(c)
 	local button = Instance.new("TextButton")
 
-	button.BackgroundColor3 = Color3.fromRGB(48, 48, 48)
+	button.BackgroundColor3 = Color3.fromRGB(51, 51, 51)
 	button.BorderSizePixel = 0
 	button.Name = c.Text
 	button.Size = UDim2.new(1, 0, 0.2, 0)
@@ -324,8 +321,9 @@ end
 
 function UI:CreateToggle(c)
 	local button = Instance.new("TextButton")
+	local boolean = true
 
-	button.BackgroundColor3 = Color3.fromRGB(48, 48, 48)
+	button.BackgroundColor3 = Color3.fromRGB(51, 51, 51)
 	button.BorderSizePixel = 0
 	button.Name = c.Text
 	button.RichText = true
@@ -335,14 +333,10 @@ function UI:CreateToggle(c)
 	button.Text = c.Text
 	button.TextColor3 = Color3.new(1, 1, 1)
 	button.TextScaled = true
-	local boolean = true
+
 	button.MouseButton1Down:Connect(function()
 		c.Callback(boolean)
-		if boolean then
-			button.Text = c.TrueText
-		else
-			button.Text = c.FalseText
-		end
+		button.Text = boolean and c.TrueText or c.FalseText
 		boolean = not boolean
 	end)
 	button.Parent = elemFrame:FindFirstChild(c.Tab)
@@ -369,7 +363,7 @@ function UI:CreateTextBox(c)
 	frame.Size = UDim2.new(1, 0, 0.2, 0)
 	frame.Parent = elemFrame:FindFirstChild(c.Tab)
 
-	textBox.BackgroundColor3 = Color3.fromRGB(32, 32, 32)
+	textBox.BackgroundColor3 = Color3.fromRGB(41, 41, 41)
 	textBox.BorderSizePixel = 0
 	textBox.TextStrokeTransparency = 0
 	textBox.RichText = true
@@ -383,7 +377,7 @@ function UI:CreateTextBox(c)
 	textBox.Parent = frame
 
 	textLabel.Name = c.Text
-	textLabel.BackgroundColor3 = Color3.fromRGB(48, 48, 48)
+	textLabel.BackgroundColor3 = Color3.fromRGB(51, 51, 51)
 	textLabel.BorderSizePixel = 0
 	textLabel.RichText = true
 	textLabel.Size = UDim2.new(0.75, 0, 1, 0)
@@ -412,8 +406,9 @@ function UI:CreateKeybind(c)
 	local frame = Instance.new("Frame")
 	local textLabel = Instance.new("TextLabel")
 	local trigger = Instance.new("TextButton")
-	local connection = nil
+	local connectionName = "Keybind_" .. add()
 	local keybind = c.DefaultKeybind
+	local boolean = true
 
 	frame.Name = c.Text
 	frame.BackgroundColor3 = Color3.new(48, 48, 48)
@@ -422,7 +417,7 @@ function UI:CreateKeybind(c)
 	frame.Size = UDim2.new(1, 0, 0.2, 0)
 	frame.Parent = elemFrame:FindFirstChild(c.Tab)
 
-	trigger.BackgroundColor3 = Color3.fromRGB(32, 32, 32)
+	trigger.BackgroundColor3 = Color3.fromRGB(41, 41, 41)
 	trigger.BorderSizePixel = 0
 	trigger.Position = UDim2.new(0.75, 0, 0, 0)
 	trigger.TextStrokeTransparency = 0
@@ -435,7 +430,7 @@ function UI:CreateKeybind(c)
 	trigger.Parent = frame
 
 	textLabel.Name = c.Text
-	textLabel.BackgroundColor3 = Color3.fromRGB(48, 48, 48)
+	textLabel.BackgroundColor3 = Color3.fromRGB(51, 51, 51)
 	textLabel.BorderSizePixel = 0
 	textLabel.RichText = true
 	textLabel.TextStrokeTransparency = 0
@@ -446,10 +441,9 @@ function UI:CreateKeybind(c)
 	textLabel.TextScaled = true
 	textLabel.Parent = frame
 
-	local boolean = true
-	UI.connections[add()] = UIS.InputBegan:Connect(function(input)
+	connections[add()] = UIS.InputBegan:Connect(function(input)
 		if input.KeyCode == keybind then
-			if c.Toggle == true then
+			if c.Toggle then
 				c.Callback(boolean)
 				boolean = not boolean
 			else
@@ -459,14 +453,14 @@ function UI:CreateKeybind(c)
 	end)
 
 	trigger.MouseButton1Down:Connect(function()
-		if connection then
+		if connections[connectionName] then
 			return
 		else
 			trigger.Text = "..."
-			connection = UIS.InputBegan:Connect(function(input)
+			connections[connectionName] = UIS.InputBegan:Connect(function(input)
 				if input.UserInputType == Enum.UserInputType.Keyboard then
-					connection:Disconnect()
-					connection = nil
+					connections[connectionName]:Disconnect()
+					connections[connectionName] = nil
 					trigger.Text = input.KeyCode.Name
 					task.wait()
 					keybind = input.KeyCode
