@@ -2,7 +2,7 @@ local UI = {}
 local connections = {}
 local connectionCount = 0
 
-local CoreGui = game:GetService("Players").LocalPlayer.PlayerGui
+local CoreGui = game:GetService("CoreGui")
 local UIS = game:GetService("UserInputService")
 
 local function add()
