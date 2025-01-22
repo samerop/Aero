@@ -110,7 +110,7 @@ UI:CreateKeybind({
 UI:CreateTextBox({
   Text = "Walk Speed",
   Tab = "Main",
-  PlaceholderText = "Value Here",
+  PlaceholderText = "Value",
   Default = 16, -- Value if player leaves TextBox blank (Optional)
 
   Callback = function(text)
