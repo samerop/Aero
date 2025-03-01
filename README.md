@@ -73,7 +73,7 @@ end,
 })
 ```
 ## Creating a Keybind
-![Keybind](https://github.com/samerop/Aero/blob/main/gallery/Keybind.png?raw=true)
+![Keybind](https://github.com/samerop/Aero/blob/main/gallery/KeybindPreview.png?raw=true)
 ### `Toggle` = `true`
 ```lua
 UI:CreateKeybind({
@@ -105,7 +105,7 @@ UI:CreateKeybind({
 })
 ```
 ## Creating a TextBox
-![TextBox](https://github.com/samerop/Aero/blob/main/gallery/TextBox.png?raw=true)
+![TextBox](https://github.com/samerop/Aero/blob/main/gallery/TextBoxPreview.png?raw=true)
 ```lua
 UI:CreateTextBox({
   Text = "Walk Speed",
@@ -119,7 +119,7 @@ UI:CreateTextBox({
 })
 ```
 > [!NOTE]
-> If there is no `Default` and the player leaves TextBox blank, it will return and `Callback` won't execute.
+> If there is no `Default` and the player leaves TextBox blank, `Callback` won't execute.
 ## Notifying the Player
 ![Notification](https://github.com/samerop/Aero/blob/main/gallery/Notification.png?raw=true)
 ```lua
@@ -139,5 +139,3 @@ UI:Notify({
 - Click the gear icon in the top-right corner to open settings
 - Toggle Aero: Toggle the visibility of Aero (configurable, `LeftControl` is default)
 - Destroy Aero: Destroy the Aero UI
-### Minimize & Maximize
-- Click the button next to settings to minimize and maximize Aero
