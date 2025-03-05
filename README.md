@@ -91,7 +91,7 @@ fov = UI:CreateTextBox({
     Text = "FOV",
     Tab = mainTab,
     PlaceholderText = "1 - 120",
-    Default = 70, -- Value if player leaves TextBox blank (Optional)
+    Default = 70, -- Optional
 
     Callback = function(text)
         game.Workspace.CurrentCamera.FieldOfView = tonumber(text)
@@ -99,7 +99,7 @@ fov = UI:CreateTextBox({
 })
 ```
 > [!NOTE]
-> If there is no `Default` and the player leaves TextBox blank, `Callback` won't execute.
+> If the player leaves TextBox blank, callback will not execute unless a Default value is provided.
 ## Updating a Element
 You can easily update an element using the variable you assigned to it. For example:
 ```lua
