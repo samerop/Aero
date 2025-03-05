@@ -2,7 +2,7 @@ local UI = {}
 local cnx = {}
 local notified = false
 
-local CoreGui = game:GetService("Players").LocalPlayer.PlayerGui
+local CoreGui = game:GetService("CoreGui")
 local UIS = game:GetService("UserInputService")
 local screenGui = Instance.new("ScreenGui")
 
