@@ -21,7 +21,8 @@ UI = loadstring(game:HttpGet("https://raw.githubusercontent.com/samerop/Aero/mai
 ## Creating a Window
 ```lua
 UI:CreateWindow({
-  Title = "My Window"
+  Title = "My Window",
+  Key = "1234" -- Key system (Optional)
 })
 ```
 ## Creating a Tab
