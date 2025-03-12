@@ -33,74 +33,62 @@ mainTab = UI:CreateTab({
 ```
 ## Creating a Button
 ```lua
-printButton = UI:CreateButton({
-    Text = "Print",
+Button = UI:CreateButton({
+    Text = "Button",
     Tab = mainTab,
 
     Callback = function()
-        print("Hello, World!")
+
     end
 })
 ```
 ## Creating a Toggle
 ```lua
-sprint = UI:CreateToggle({
-    Text = "Sprint: OFF",
+Toggle = UI:CreateToggle({
+    Text = "Toggle: OFF",
     Tab = mainTab,
 
     Callback = function(boolean)
         if boolean then
-            game.Players.LocalPlayer.Character.Humanoid.WalkSpeed = 128
-            sprint.Text = "Sprint: ON"
+            Toggle.Text = "Toggle: ON"
         else
-            game.Players.LocalPlayer.Character.Humanoid.WalkSpeed = 16
-            sprint.Text = "Sprint: OFF"
+            Toggle.Text = "Toggle: OFF"
         end
     end
 })
 ```
 ## Creating a Keybind
 ```lua
-esp = UI:CreateKeybind({
-    Text = "ESP",
+Keybind = UI:CreateKeybind({
+    Text = "Keybind",
     Tab = mainTab,
     DefaultKeybind = Enum.KeyCode.C,
     Toggle = true,
 	
     Callback = function(boolean) -- If Toggle is false, you don't need 'boolean'
         if boolean then
-            for _, player in pairs(game.Players:GetPlayers()) do
-                local h = Instance.new("Highlight")
-                h.OutlineTransparency = 1
-                h.FillColor = Color3.fromRGB(13, 105, 172)
-                h.FillTransparency = 0.2
-                h.Parent = player.Character
-            end
+
         else
-            for _, player in pairs(game.Players:GetPlayers()) do
-                if player.Character:FindFirstChild("Highlight") then
-                    player.Character:FindFirstChild("Highlight"):Destroy()
-                end
-            end
+
         end
     end
 })
 ```
 ## Creating a TextBox
 ```lua
-fov = UI:CreateTextBox({
-    Text = "FOV",
+TextBox = UI:CreateTextBox({
+    Text = "TextBox",
     Tab = mainTab,
-    PlaceholderText = "1 - 120",
-    Default = 70, -- Optional
+    PlaceholderText = "",
+    Default = 10, -- Optional
 
     Callback = function(text)
-        game.Workspace.CurrentCamera.FieldOfView = tonumber(text)
+
     end
 })
 ```
 > [!NOTE]
-> If the player leaves TextBox blank, callback will not execute unless a Default value is provided.
+> If the player leaves TextBox blank, Callback won't execute unless a Default value is provided.
 ## Updating a Element
 You can easily update an element using the variable you assigned to it. For example:
 ```lua
