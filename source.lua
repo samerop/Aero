@@ -4,25 +4,30 @@ local notified = false
 
 local CoreGui = game:GetService("CoreGui")
 local UIS = game:GetService("UserInputService")
-local screenGui = Instance.new("ScreenGui", CoreGui)
+local validKey = Instance.new("BindableEvent")
+local screenGui = Instance.new("ScreenGui")
+screenGui.Name = "Aero"
+screenGui.ResetOnSpawn = false
+screenGui.IgnoreGuiInset = true
+screenGui.Parent = CoreGui
 
 function UI:CreateWindow(c)
 	if c.Key then
 		local key = c.Key
-		
+
 		local frame = Instance.new("Frame")
 		local title = Instance.new("TextLabel")
 		local textBox = Instance.new("TextBox")
 		local enter = Instance.new("TextButton")
 		local textLabel = Instance.new("TextLabel")
 		local exit = Instance.new("TextButton")
-		
-		frame.Size = UDim2.new(0.3, 0, 0.3, 0)
-		frame.Position = UDim2.new(0.35, 0, 0.35, 0)
+
+		frame.Size = UDim2.new(0.333, 0, 0.333, 0)
+		frame.Position = UDim2.new(0.333, 0, 0.333, 0)
 		frame.BorderSizePixel = 0
 		frame.BackgroundColor3 = Color3.fromRGB(32, 32, 32)
 		frame.Parent = screenGui
-		
+
 		title.Size = UDim2.new(1, 0, 0.1, 0)
 		title.BackgroundColor3 = Color3.new(0, 0, 0)
 		title.Text = "Key System"
@@ -31,7 +36,7 @@ function UI:CreateWindow(c)
 		title.Font = Enum.Font.SourceSans
 		title.BorderSizePixel = 0
 		title.Parent = frame
-		
+
 		exit.Text = "X"
 		exit.Font = Enum.Font.SourceSans
 		exit.TextColor3 = Color3.new(1, 1, 1)
@@ -58,19 +63,18 @@ function UI:CreateWindow(c)
 				notified = nil
 				UI = nil
 				screenGui:Destroy()
-				return
 			end
 		end)
-		
+
 		cnx[#cnx+1] = exit.MouseEnter:Connect(function()
 			exit.BackgroundColor3 = BrickColor.new("Bright red").Color
 		end)
-		
+
 		cnx[#cnx+1] = exit.MouseLeave:Connect(function()
 			exit.BackgroundColor3 = Color3.new(0, 0, 0)
 		end)
 		exit.Parent = title
-	
+
 		textBox.BackgroundColor3 = Color3.fromRGB(64, 64, 64)
 		textBox.Text = ""
 		textBox.PlaceholderText = "Key"
@@ -81,7 +85,7 @@ function UI:CreateWindow(c)
 		textBox.Font = Enum.Font.SourceSans
 		textBox.Position = UDim2.new(0.1, 0, 0.4, 0)
 		textBox.Parent = frame
-		
+
 		textLabel.Text = "Enter a Key"
 		textLabel.Size = UDim2.new(0.8, 0, 0.2, 0)
 		textLabel.Position = UDim2.new(0.1, 0, 0.15, 0)
@@ -92,7 +96,7 @@ function UI:CreateWindow(c)
 		textLabel.TextScaled = true
 		textLabel.TextColor3 = Color3.new(1, 1, 1)
 		textLabel.Parent = frame
-		
+
 		enter.Size = UDim2.new(0.4, 0, 0.2, 0)
 		enter.Position = UDim2.new(0.3, 0, 0.7, 0)
 		enter.AutoButtonColor = false
@@ -109,7 +113,7 @@ function UI:CreateWindow(c)
 				textLabel.BackgroundColor3 = BrickColor.new("Bright green").Color
 				task.wait(1)
 				screenGui:ClearAllChildren()
-				UI.KeyValidated = true
+				validKey:Fire()
 			elseif textLabel.Text == "Enter a Key" then
 				textBox.Text = ""
 				textLabel.Text = "Access Denied"
@@ -120,11 +124,11 @@ function UI:CreateWindow(c)
 			end
 		end)
 		enter.Parent = frame
-		
+
 		local dragStartMousePosition = nil
 		local startFramePosition = nil
 		local isDragging = false
-		
+
 		cnx[#cnx+1] = title.InputBegan:Connect(function(input)
 			if input.UserInputType == Enum.UserInputType.MouseButton1 then
 				isDragging = true
@@ -151,8 +155,8 @@ function UI:CreateWindow(c)
 			end
 		end)
 	end
-	
-	if c.Key then repeat wait() until UI.KeyValidated == true end
+
+	if c.Key then validKey.Event:Wait() end
 	local frame = Instance.new("Frame")
 	local title = Instance.new("TextLabel")
 	local elemFrame = Instance.new("Frame")
@@ -168,15 +172,11 @@ function UI:CreateWindow(c)
 	local destroy = Instance.new("TextButton")
 	local keybind = Enum.KeyCode.LeftControl
 
-	screenGui.Name = "Aero"
-	screenGui.ResetOnSpawn = false
-	screenGui.IgnoreGuiInset = true
-
 	frame.BackgroundColor3 = Color3.fromRGB(32, 32, 32)
 	frame.BorderSizePixel = 0
-	frame.Position = UDim2.new(0.35, 0, 0.35, 0)
+	frame.Position = UDim2.new(0.3, 0, 0.3, 0)
 	frame.ClipsDescendants = true
-	frame.Size = UDim2.new(0.3, 0, 0.3, 0)
+	frame.Size = UDim2.new(0.4, 0, 0.4, 0)
 	frame.Parent = screenGui
 
 	title.Text = c.Title
@@ -323,6 +323,7 @@ function UI:CreateWindow(c)
 				game:GetService("StarterGui"):SetCore("SendNotification", {
 					Title = "Aero is Hidden",
 					Text = "Use " .. keybind.Name .. " to toggle",
+					Icon = "rbxasset://textures/StudioSharedUI/alert_info@2x.png",
 					Duration = 4
 				})
 				notified = true
@@ -362,7 +363,7 @@ function UI:CreateWindow(c)
 end
 
 function UI:CreateTab(c)
-	if c.Key then repeat wait() until UI.KeyValidated == true end
+	if c.Key then validKey.Event:Wait() end
 
 	local tabButton = Instance.new("TextButton")
 	local sf = Instance.new("ScrollingFrame")
@@ -416,7 +417,7 @@ function UI:CreateTab(c)
 end
 
 function UI:CreateButton(c)
-	if c.Key then repeat wait() until UI.KeyValidated == true end
+	if c.Key then validKey.Event:Wait() end
 
 	local button = Instance.new("TextButton")
 
@@ -435,7 +436,7 @@ function UI:CreateButton(c)
 end
 
 function UI:CreateToggle(c)
-	if c.Key then repeat wait() until UI.KeyValidated == true end
+	if c.Key then validKey.Event:Wait() end
 
 	local button = Instance.new("TextButton")
 	local boolean = true
@@ -458,7 +459,7 @@ function UI:CreateToggle(c)
 end
 
 function UI:Notify(c)
-	if c.Key then repeat wait() until UI.KeyValidated == true end
+	if c.Key then validKey.Event:Wait() end
 	game:GetService("StarterGui"):SetCore("SendNotification", {
 		Title = c.Title or "",
 		Text = c.Text or "",
@@ -468,7 +469,7 @@ function UI:Notify(c)
 end
 
 function UI:CreateTextBox(c)
-	if c.Key then repeat wait() until UI.KeyValidated == true end
+	if c.Key then validKey.Event:Wait() end
 
 	local frame = Instance.new("Frame")
 	local textLabel = Instance.new("TextLabel")
@@ -516,7 +517,7 @@ function UI:CreateTextBox(c)
 end
 
 function UI:CreateKeybind(c)
-	if c.Key then repeat wait() until UI.KeyValidated == true end
+	if c.Key then validKey.Event:Wait() end
 
 	local frame = Instance.new("Frame")
 	local textLabel = Instance.new("TextLabel")
