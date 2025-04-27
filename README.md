@@ -1,4 +1,4 @@
-![AeroBanner](https://github.com/samerop/Aero/blob/main/gallery/Banner.jpg?raw=true)
+<div align="center"><img src="https://github.com/samerop/Aero/blob/main/gallery/AeroPreview.png?raw=true"/></div>
 <div align="center"><img src="https://img.shields.io/badge/voltaikz-blue?style=flat&logo=discord&logoColor=%23ffffff&labelColor=%235865F2&color=%235865F2"/></div>
 
 # Aero UI Library
