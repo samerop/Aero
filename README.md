@@ -1,4 +1,4 @@
-<div align="center"><img src="https://github.com/samerop/Aero/blob/main/gallery/AeroPreview.png?raw=true"/></div>
+<div align="center"><img src="https://github.com/samerop/Aero/blob/main/gallery/Preview.png?raw=true"/></div>
 <div align="center"><img src="https://img.shields.io/badge/voltaikz-blue?style=flat&logo=discord&logoColor=%23ffffff&labelColor=%235865F2&color=%235865F2"/></div>
 
 # Aero UI Library
@@ -6,114 +6,97 @@
 - [Creating a Window](#creating-a-window)
 - [Creating a Tab](#creating-a-tab)
 - [Creating a Button](#creating-a-button)
+  - [Updating a Button](#updating-a-button)
 - [Creating a Toggle](#creating-a-toggle)
+  - [Updating a Toggle](#updating-a-toggle)
 - [Creating a Keybind](#creating-a-keybind)
+  - [Updating a Keybind](#updating-a-keybind)
 - [Creating a TextBox](#creating-a-textbox)
-- [Updating a Element](#updating-a-element)
+  - [Updating a TextBox](#updating-a-textbox)
 - [Notifying the Player](#notifying-the-player)
   - [Icon Paths](#icon-paths)
-> [!IMPORTANT]
-> Use global variables for methods instead of local (e.g., `button = UI:CreateButton`).
 ## Getting Aero
 ```lua
-UI = loadstring(game:HttpGet("https://raw.githubusercontent.com/samerop/Aero/main/source.lua"))()
+local Aero = loadstring(game:HttpGet("https://raw.githubusercontent.com/samerop/Aero/main/source.lua"))()
 ```
 ## Creating a Window
 ```lua
-UI:CreateWindow({
-  Title = "My Window",
-  Key = "1234" -- Key system (Optional)
+local Window = Aero:CreateWindow({
+    Name = "Window Name",
+    Key = "MyKey1234" -- Optional
 })
 ```
 ## Creating a Tab
 ```lua
-mainTab = UI:CreateTab({
-  Name = "Main"
-})
+local Tab = Window:CreateTab("Main")
 ```
 ## Creating a Button
 ```lua
-Button = UI:CreateButton({
-    Text = "Button",
-    Tab = mainTab,
-
+local Button = Tab:CreateButton({
+    Text = "Button Text",
     Callback = function()
 
     end
 })
 ```
+#### Updating a Button
+```lua
+Button:Set("NewButtonText")
+```
 ## Creating a Toggle
 ```lua
-Toggle = UI:CreateToggle({
-    Text = "Toggle: OFF",
-    Tab = mainTab,
+local Toggle = Tab:CreateToggle({
+    Text = "Toggle",
+    CurrentValue = false,
+    Callback = function(Value)
 
-    Callback = function(boolean)
-        if boolean then
-            Toggle.Text = "Toggle: ON"
-        else
-            Toggle.Text = "Toggle: OFF"
-        end
     end
 })
+```
+#### Updating a Toggle
+```lua
+Toggle:Set(true)
 ```
 ## Creating a Keybind
 ```lua
-Keybind = UI:CreateKeybind({
+local Keybind = Tab:CreateKeybind({
     Text = "Keybind",
-    Tab = mainTab,
-    DefaultKeybind = Enum.KeyCode.C,
-    Toggle = true,
-	
-    Callback = function(boolean) -- If Toggle is false, you don't need 'boolean'
-        if boolean then
+    CurrentKeybind = "F",
+    Callback = function()
 
-        else
-
-        end
     end
 })
 ```
+#### Updating a Keybind
+```lua
+Keybind:Set("Q")
+```
 ## Creating a TextBox
 ```lua
-TextBox = UI:CreateTextBox({
+local TextBox = Tab:CreateTextBox({
     Text = "TextBox",
-    Tab = mainTab,
-    PlaceholderText = "",
-    Default = 10, -- Optional
-
+    CurrentValue = "",
+    ClearTextOnFocusLost = false,
+    PlaceholderText = "Value",
     Callback = function(text)
 
     end
 })
 ```
-> [!NOTE]
-> If the player leaves TextBox blank, Callback won't execute unless a Default value is provided.
-## Updating a Element
-You can easily update an element using the variable you assigned to it. For example:
+#### Updating a TextBox
 ```lua
-button = UI:CreateButton({
-    Text = "Print",
-    Tab = mainTab,
-
-    Callback = function()
-        print("Hello")
-        button.Text = "Successfully printed"
-        button.BackgroundColor3 = Color3.new(0, 1, 0)
-    end
-})
+TextBox:Set("NewText")
 ```
 ## Notifying the Player
-![Notification](https://github.com/samerop/Aero/blob/main/gallery/Notification.png?raw=true)
 ```lua
-UI:Notify({
-    Title = "Powered by Aero",
-    Text = "Welcome",
-    Duration = 5,
-    Icon = "rbxasset://textures/loading/robloxlogo.png" -- Optional
+Aero:Notify({
+    Title = "Title",
+    Text = "Text",
+    Duration = 4,
+    Icon = "ICON_PATH_HERE" -- Optional
 })
 ```
 > [!NOTE]
-> ### `Icon` Paths
+> ### Icon Paths
 > - `rbxassetid://` (user-uploaded assets, requires the asset's ID)
 > - `rbxasset://` (built-in Roblox content: `%localappdata%\Roblox\Versions\<version>\content`)
