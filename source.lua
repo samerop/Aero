@@ -1,29 +1,54 @@
-local UI = {}
-local cnx = {}
+local Aero = {}
 local notified = false
 
 local CoreGui = game:GetService("CoreGui")
-local UIS = game:GetService("UserInputService")
-local validKey = Instance.new("BindableEvent")
+local UserInputService = game:GetService("UserInputService")
+local StarterGui = game:GetService("StarterGui")
 local screenGui = Instance.new("ScreenGui")
 screenGui.Name = "Aero"
 screenGui.ResetOnSpawn = false
 screenGui.IgnoreGuiInset = true
 screenGui.Parent = CoreGui
 
-function UI:CreateWindow(c)
-	if c.Key then
-		local key = c.Key
+function Aero:Notify(t)
+	StarterGui:SetCore("SendNotification", {
+		Title = t.Title or "",
+		Text = t.Text or "",
+		Duration = t.Duration or 5,
+		Icon = t.Icon or nil
+	})
+end
+
+function Aero:CreateWindow(Window)
+	local frame = Instance.new("Frame")
+	local title = Instance.new("TextLabel")
+	local elemFrame = Instance.new("Frame")
+	local uipl = Instance.new("UIPageLayout")
+	local tabSF = Instance.new("ScrollingFrame")
+	local uill = Instance.new("UIListLayout")
+	local settingsButton = Instance.new("ImageButton")
+	local settingsFrame = Instance.new("Frame")
+	local settingsUILL = Instance.new("UIListLayout")
+	local tglFrame = Instance.new("Frame")
+	local tglTL = Instance.new("TextLabel")
+	local tglTrigger = Instance.new("TextButton")
+	local destroy = Instance.new("TextButton")
+	local aeroKeybind = Enum.KeyCode.LeftControl
+
+	if Window.KeySystem[1] then
+		local key = Window.KeySystem.Key
+		local keyValid = Instance.new("BoolValue")
+		keyValid.Value = false
 
 		local frame = Instance.new("Frame")
 		local title = Instance.new("TextLabel")
 		local textBox = Instance.new("TextBox")
-		local enter = Instance.new("TextButton")
 		local textLabel = Instance.new("TextLabel")
 		local exit = Instance.new("TextButton")
+		local noteText = "<font size='8'><font color='#808080'>Note:</font></font>\n<font size='12'>" .. if Window.KeySystem.Note then Window.KeySystem.Note .. "</font>" else "No instructions" .. "</font>"
 
-		frame.Size = UDim2.new(0.333, 0, 0.333, 0)
-		frame.Position = UDim2.new(0.333, 0, 0.333, 0)
+		frame.Size = UDim2.new(0.2, 0, 0.4, 0)
+		frame.Position = UDim2.new(0.4, 0, 0.3, 0)
 		frame.BorderSizePixel = 0
 		frame.BackgroundColor3 = Color3.fromRGB(32, 32, 32)
 		frame.Parent = screenGui
@@ -33,7 +58,7 @@ function UI:CreateWindow(c)
 		title.Text = "Key System"
 		title.TextColor3 = Color3.new(1, 1, 1)
 		title.TextScaled = true
-		title.Font = Enum.Font.SourceSans
+		title.Font = Enum.Font.SourceSansBold
 		title.BorderSizePixel = 0
 		title.Parent = frame
 
@@ -49,28 +74,22 @@ function UI:CreateWindow(c)
 		exit.MouseButton1Down:Connect(function()
 			if textLabel.Text ~= "Are you sure?" then
 				textLabel.Text  = "Are you sure?"
-				textLabel.BackgroundColor3 = BrickColor.new("Bright red").Color
+				textLabel.BackgroundColor3 = Color3.fromRGB(192, 0, 0)
 				task.delay(2, function()
-					textLabel.Text = "Enter a Key"
+					textLabel.Text = noteText
 					textLabel.BackgroundColor3 = Color3.fromRGB(32, 32, 32)
 				end)
 			else
-				for _, v in cnx do
-					v:Disconnect()
-					v = nil
-				end
-				cnx = nil
-				notified = nil
-				UI = nil
+				notified = true
 				screenGui:Destroy()
 			end
 		end)
 
-		cnx[#cnx+1] = exit.MouseEnter:Connect(function()
-			exit.BackgroundColor3 = BrickColor.new("Bright red").Color
+		exit.MouseEnter:Connect(function()
+			exit.BackgroundColor3 = Color3.fromRGB(192, 0, 0)
 		end)
 
-		cnx[#cnx+1] = exit.MouseLeave:Connect(function()
+		exit.MouseLeave:Connect(function()
 			exit.BackgroundColor3 = Color3.new(0, 0, 0)
 		end)
 		exit.Parent = title
@@ -81,14 +100,16 @@ function UI:CreateWindow(c)
 		textBox.TextColor3 = Color3.new(1, 1, 1)
 		textBox.TextScaled = true
 		textBox.BorderSizePixel = 0
-		textBox.Size = UDim2.new(0.8, 0, 0.2, 0)
+		textBox.Size = UDim2.new(0.8, 0, 0.1, 0)
+		textBox.PlaceholderColor3 = Color3.fromRGB(128, 128, 128)
 		textBox.Font = Enum.Font.SourceSans
-		textBox.Position = UDim2.new(0.1, 0, 0.4, 0)
+		textBox.Position = UDim2.new(0.1, 0, 0.2, 0)
 		textBox.Parent = frame
 
-		textLabel.Text = "Enter a Key"
-		textLabel.Size = UDim2.new(0.8, 0, 0.2, 0)
-		textLabel.Position = UDim2.new(0.1, 0, 0.15, 0)
+		textLabel.RichText = true
+		textLabel.Text = noteText
+		textLabel.Size = UDim2.new(0.8, 0, 0.5, 0)
+		textLabel.Position = UDim2.new(0.1, 0, 0.4, 0)
 		textLabel.BackgroundColor3 = Color3.fromRGB(32, 32, 32)
 		textLabel.BorderSizePixel = 0
 		textLabel.Font = Enum.Font.SourceSans
@@ -97,94 +118,40 @@ function UI:CreateWindow(c)
 		textLabel.TextColor3 = Color3.new(1, 1, 1)
 		textLabel.Parent = frame
 
-		enter.Size = UDim2.new(0.4, 0, 0.2, 0)
-		enter.Position = UDim2.new(0.3, 0, 0.7, 0)
-		enter.AutoButtonColor = false
-		enter.BackgroundColor3 = Color3.fromRGB(64, 64, 64)
-		enter.BorderSizePixel = 0
-		enter.Font = Enum.Font.SourceSans
-		enter.Text = "Enter"
-		enter.TextScaled = true
-		enter.TextColor3 = Color3.new(1, 1, 1)
-		enter.MouseButton1Down:Connect(function()
-			if textBox.Text == key and textLabel.Text == "Enter a Key" then
+		textBox.FocusLost:Connect(function(e)
+			if textBox.Text == key then
 				textBox.Text = ""
 				textLabel.Text = "Access Granted"
-				textLabel.BackgroundColor3 = BrickColor.new("Bright green").Color
+				textLabel.BackgroundColor3 = Color3.fromRGB(0, 192, 0)
 				task.wait(1)
 				screenGui:ClearAllChildren()
-				validKey:Fire()
-			elseif textLabel.Text == "Enter a Key" then
+				keyValid.Value = true
+			elseif textBox.Text:match(".") then
 				textBox.Text = ""
 				textLabel.Text = "Access Denied"
-				textLabel.BackgroundColor3 = BrickColor.new("Bright red").Color
+				textLabel.BackgroundColor3 = Color3.fromRGB(192, 0, 0)
 				task.wait(1)
-				textLabel.Text = "Enter a Key"
+				textLabel.Text = noteText
 				textLabel.BackgroundColor3 = Color3.fromRGB(32, 32, 32)
 			end
 		end)
-		enter.Parent = frame
 
-		local dragStartMousePosition = nil
-		local startFramePosition = nil
-		local isDragging = false
-
-		cnx[#cnx+1] = title.InputBegan:Connect(function(input)
-			if input.UserInputType == Enum.UserInputType.MouseButton1 then
-				isDragging = true
-				dragStartMousePosition = input.Position
-				startFramePosition = frame.Position
-			end
-		end)
-
-		cnx[#cnx+1] = UIS.InputChanged:Connect(function(input)
-			if isDragging then
-				local delta = input.Position - dragStartMousePosition
-				frame.Position = UDim2.new(
-					startFramePosition.X.Scale, startFramePosition.X.Offset + delta.X,
-					startFramePosition.Y.Scale, startFramePosition.Y.Offset + delta.Y
-				)
-			end
-		end)
-
-		cnx[#cnx+1] = UIS.InputEnded:Connect(function(input)
-			if isDragging then
-				isDragging = false
-				dragStartMousePosition = nil
-				startFramePosition = nil
-			end
-		end)
+		keyValid.Changed:Wait()
 	end
-
-	if c.Key then validKey.Event:Wait() end
-	local frame = Instance.new("Frame")
-	local title = Instance.new("TextLabel")
-	local elemFrame = Instance.new("Frame")
-	local uipl = Instance.new("UIPageLayout")
-	local tabSF = Instance.new("ScrollingFrame")
-	local uill = Instance.new("UIListLayout")
-	local settingsButton = Instance.new("ImageButton")
-	local settingsFrame = Instance.new("Frame")
-	local settingsUILL = Instance.new("UIListLayout")
-	local tglFrame = Instance.new("Frame")
-	local tglTL = Instance.new("TextLabel")
-	local tglTrigger = Instance.new("TextButton")
-	local destroy = Instance.new("TextButton")
-	local keybind = Enum.KeyCode.LeftControl
 
 	frame.BackgroundColor3 = Color3.fromRGB(32, 32, 32)
 	frame.BorderSizePixel = 0
-	frame.Position = UDim2.new(0.3, 0, 0.3, 0)
+	frame.Position = UDim2.new(1 / 3, 0, 1 / 3, 0)
 	frame.ClipsDescendants = true
-	frame.Size = UDim2.new(0.4, 0, 0.4, 0)
+	frame.Size = UDim2.new(1 / 3, 0, 1 / 3, 0)
 	frame.Parent = screenGui
 
-	title.Text = c.Title
+	title.Text = Window.Name
 	title.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
 	title.BorderSizePixel = 0
 	title.Name = "Title"
 	title.Size = UDim2.new(1, 0, 0.1, 0)
-	title.Font = Enum.Font.SourceSans
+	title.Font = Enum.Font.SourceSansBold
 	title.TextColor3 = Color3.new(1, 1, 1)
 	title.TextScaled = true
 	title.Parent = frame
@@ -213,33 +180,31 @@ function UI:CreateWindow(c)
 	tglTL.TextColor3 = Color3.new(1, 1, 1)
 	tglTL.TextScaled = true
 	tglTL.Parent = tglFrame
-
-	local cnxName = tostring(#cnx+1)
+	
+	local aeroCnx
 	tglTrigger.BackgroundColor3 = Color3.fromRGB(16, 16, 16)
 	tglTrigger.BorderSizePixel = 0
 	tglTrigger.AutoButtonColor = false
 	tglTrigger.Position = UDim2.new(0.75, 0, 0, 0)
 	tglTrigger.Size = UDim2.new(0.25, 0, 1, 0)
 	tglTrigger.Font = Enum.Font.SourceSans
-	tglTrigger.Text = keybind.Name
+	tglTrigger.Text = aeroKeybind.Name
 	tglTrigger.TextColor3 = Color3.new(1, 1, 1)
 	tglTrigger.TextScaled = true
 	tglTrigger.MouseButton1Down:Connect(function()
-		if cnx[cnxName] then
+		if aeroCnx then
 			return
 		else
 			tglTrigger.Text = "..."
-			cnx[cnxName] = UIS.InputBegan:Connect(function(input)
+			aeroCnx = UserInputService.InputBegan:Connect(function(input)
 				if input.UserInputType == Enum.UserInputType.Keyboard then
-					cnx[cnxName]:Disconnect()
-					cnx[cnxName] = nil
 					tglTrigger.Text = input.KeyCode.Name
 					task.wait()
-					keybind = input.KeyCode
+					aeroKeybind = input.KeyCode
+					aeroCnx:Disconnect()
+					aeroCnx = nil
 				elseif input.UserInputType == Enum.UserInputType.MouseButton2 then
-					cnx[cnxName]:Disconnect()
-					cnx[cnxName] = nil
-					tglTrigger.Text = keybind.Name
+					tglTrigger.Text = aeroKeybind.Name
 				end
 			end)
 		end
@@ -257,19 +222,14 @@ function UI:CreateWindow(c)
 	destroy.MouseButton1Down:Connect(function()
 		if destroy.Text ~= "Are you sure?" then
 			destroy.Text = "Are you sure?"
-			destroy.BackgroundColor3 = BrickColor.new("Bright red").Color
+			destroy.BackgroundColor3 = Color3.fromRGB(192, 0, 0)
 			task.delay(2, function()
 				destroy.Text = "Destroy Aero"
 				destroy.BackgroundColor3 = Color3.fromRGB(64, 64, 64)
 			end)
 		else
-			for _, v in cnx do
-				v:Disconnect()
-				v = nil
-			end
-			cnx = nil
-			notified = nil
-			UI = nil
+			notified = true
+			Aero = nil
 			screenGui:Destroy()
 		end
 	end)
@@ -284,8 +244,11 @@ function UI:CreateWindow(c)
 	settingsButton.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
 	settingsButton.MouseButton1Down:Connect(function()
 		settingsFrame.Visible = not settingsFrame.Visible
+		settingsButton.BackgroundColor3 = settingsFrame.Visible and Color3.fromRGB(0, 128, 255) or Color3.fromRGB(0, 0, 0)
 		elemFrame.Visible = not elemFrame.Visible
-		title.Text = settingsFrame.Visible and "Settings" or c.Title
+		title.Text = settingsFrame.Visible and "Settings" or Window.Name
+		for _, v in ipairs(tabSF:GetChildren()) do if v:IsA("TextButton") then v.BackgroundColor3 = Color3.fromRGB(0, 0, 0) end end
+		tabSF:FindFirstChild(uipl.CurrentPage.Name).BackgroundColor3 = settingsFrame.Visible == true and Color3.fromRGB(0, 0, 0) or Color3.fromRGB(0, 128, 255)
 	end)
 	settingsButton.Parent = title
 
@@ -316,13 +279,13 @@ function UI:CreateWindow(c)
 	uill.SortOrder = Enum.SortOrder.LayoutOrder
 	uill.Parent = tabSF
 
-	cnx[#cnx+1] = UIS.InputBegan:Connect(function(input)
-		if input.KeyCode == keybind then
+	UserInputService.InputBegan:Connect(function(input)
+		if input.KeyCode == aeroKeybind then
 			frame.Visible = not frame.Visible
 			if not notified then
 				game:GetService("StarterGui"):SetCore("SendNotification", {
 					Title = "Aero is Hidden",
-					Text = "Use " .. keybind.Name .. " to toggle",
+					Text = "Use " .. aeroKeybind.Name .. " to toggle",
 					Icon = "rbxasset://textures/StudioSharedUI/alert_info@2x.png",
 					Duration = 4
 				})
@@ -335,7 +298,7 @@ function UI:CreateWindow(c)
 	local startFramePosition = nil
 	local isDragging = false
 
-	cnx[#cnx+1] = title.InputBegan:Connect(function(input)
+	title.InputBegan:Connect(function(input)
 		if input.UserInputType == Enum.UserInputType.MouseButton1 then
 			isDragging = true
 			dragStartMousePosition = input.Position
@@ -343,248 +306,328 @@ function UI:CreateWindow(c)
 		end
 	end)
 
-	cnx[#cnx+1] = UIS.InputChanged:Connect(function(input)
-		if isDragging then
+	UserInputService.InputChanged:Connect(function(input)
+		if isDragging and input.UserInputType == Enum.UserInputType.MouseMovement then
 			local delta = input.Position - dragStartMousePosition
+
+			local targetOffsetX = startFramePosition.X.Offset + delta.X
+			local targetOffsetY = startFramePosition.Y.Offset + delta.Y
+
+			local parentAbsSize = screenGui.AbsoluteSize
+
+			local potentialAnchorAbsoluteX = (startFramePosition.X.Scale * parentAbsSize.X) + targetOffsetX
+			local potentialAnchorAbsoluteY = (startFramePosition.Y.Scale * parentAbsSize.Y) + targetOffsetY
+
+			local screenSize = workspace.CurrentCamera.ViewportSize
+			local frameAbsoluteSize = frame.AbsoluteSize
+			local frameAnchorPoint = frame.AnchorPoint
+
+			local minAnchorAbsoluteX = frameAnchorPoint.X * frameAbsoluteSize.X
+			local maxAnchorAbsoluteX = screenSize.X - (1 - frameAnchorPoint.X) * frameAbsoluteSize.X
+
+			local minAnchorAbsoluteY = frameAnchorPoint.Y * frameAbsoluteSize.Y
+			local maxAnchorAbsoluteY = screenSize.Y - (1 - frameAnchorPoint.Y) * frameAbsoluteSize.Y
+
+			local clampedAnchorAbsoluteX = math.clamp(potentialAnchorAbsoluteX, minAnchorAbsoluteX, maxAnchorAbsoluteX)
+			local clampedAnchorAbsoluteY = math.clamp(potentialAnchorAbsoluteY, minAnchorAbsoluteY, maxAnchorAbsoluteY)
+
+			local finalNewOffsetX = clampedAnchorAbsoluteX - (startFramePosition.X.Scale * parentAbsSize.X)
+			local finalNewOffsetY = clampedAnchorAbsoluteY - (startFramePosition.Y.Scale * parentAbsSize.Y)
+
 			frame.Position = UDim2.new(
-				startFramePosition.X.Scale, startFramePosition.X.Offset + delta.X,
-				startFramePosition.Y.Scale, startFramePosition.Y.Offset + delta.Y
+				startFramePosition.X.Scale, finalNewOffsetX,
+				startFramePosition.Y.Scale, finalNewOffsetY
 			)
 		end
 	end)
 
-	cnx[#cnx+1] = UIS.InputEnded:Connect(function(input)
-		if isDragging then
-			isDragging = false
-			dragStartMousePosition = nil
-			startFramePosition = nil
-		end
-	end)
-end
-
-function UI:CreateTab(c)
-	if c.Key then validKey.Event:Wait() end
-
-	local tabButton = Instance.new("TextButton")
-	local sf = Instance.new("ScrollingFrame")
-	local uill = Instance.new("UIListLayout")
-
-	if #screenGui.Frame.TabSF:GetChildren() == 1 then 
-		tabButton.BackgroundColor3 = BrickColor.new("Bright blue").Color
-	else
-		tabButton.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-	end
-
-	tabButton.Name = c.Name
-	tabButton.Text = c.Name
-	tabButton.BorderSizePixel = 0
-	tabButton.AutoButtonColor = false
-	tabButton.Size = UDim2.new(1, 0, 0.2, 0)
-	tabButton.Font = Enum.Font.SourceSans
-	tabButton.TextColor3 = Color3.new(1, 1, 1)
-	tabButton.TextScaled = true
-	tabButton.MouseButton1Down:Connect(function()
-		local page = screenGui.Frame.Elements:FindFirstChild(tabButton.Name)
-		screenGui.Frame.Elements.UIPageLayout:JumpTo(page)
-		page.CanvasPosition = Vector2.new(0, 0)
-
-		for _, v in pairs(screenGui.Frame.TabSF:GetChildren()) do
-			if v:IsA("TextButton") and v.Name ~= tabButton.Name then
-				v.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-			else
-				tabButton.BackgroundColor3 = BrickColor.new("Bright blue").Color
+	UserInputService.InputEnded:Connect(function(input)
+		if input.UserInputType == Enum.UserInputType.MouseButton1 then
+			if isDragging then
+				isDragging = false
 			end
 		end
 	end)
-	tabButton.Parent = screenGui.Frame.TabSF
 
-	sf.Name = c.Name
-	sf.BackgroundTransparency = 1
-	sf.BorderSizePixel = 0
-	sf.Active = false
-	sf.AutomaticCanvasSize = Enum.AutomaticSize.Y
-	sf.Size = UDim2.new(1, 0, 1, 0)
-	sf.CanvasSize = UDim2.new(0, 0, 1, 0)
-	sf.ScrollBarThickness = 0
-	sf.ElasticBehavior = Enum.ElasticBehavior.Never
-	sf.ScrollingDirection = Enum.ScrollingDirection.Y
-	sf.Parent = screenGui.Frame.Elements
+	function Window:CreateTab(n)
+		local Tab = {}
+		local tabButton = Instance.new("TextButton")
+		local sf = Instance.new("ScrollingFrame")
+		local uill = Instance.new("UIListLayout")
 
-	uill.SortOrder = Enum.SortOrder.LayoutOrder
-	uill.Parent = sf
-
-	return sf
-end
-
-function UI:CreateButton(c)
-	if c.Key then validKey.Event:Wait() end
-
-	local button = Instance.new("TextButton")
-
-	button.Text = c.Text
-	button.Name = c.Text
-	button.BackgroundColor3 = Color3.fromRGB(64, 64, 64)
-	button.AutoButtonColor = false
-	button.BorderSizePixel = 0
-	button.Size = UDim2.new(1, 0, 0.2, 0)
-	button.Font = Enum.Font.SourceSans
-	button.TextColor3 = Color3.new(1, 1, 1)
-	button.TextScaled = true
-	button.MouseButton1Down:Connect(c.Callback)
-	button.Parent = c.Tab
-	return button
-end
-
-function UI:CreateToggle(c)
-	if c.Key then validKey.Event:Wait() end
-
-	local button = Instance.new("TextButton")
-	local boolean = true
-
-	button.Text = c.Text
-	button.Name = c.Text
-	button.AutoButtonColor = false
-	button.BackgroundColor3 = Color3.fromRGB(64, 64, 64)
-	button.BorderSizePixel = 0
-	button.Size = UDim2.new(1, 0, 0.2, 0)
-	button.Font = Enum.Font.SourceSans
-	button.TextColor3 = Color3.new(1, 1, 1)
-	button.TextScaled = true
-	button.MouseButton1Down:Connect(function()
-		c.Callback(boolean)
-		boolean = not boolean
-	end)
-	button.Parent = c.Tab
-	return button
-end
-
-function UI:Notify(c)
-	if c.Key then validKey.Event:Wait() end
-	game:GetService("StarterGui"):SetCore("SendNotification", {
-		Title = c.Title or "",
-		Text = c.Text or "",
-		Duration = c.Duration or 5,
-		Icon = c.Icon or nil
-	})
-end
-
-function UI:CreateTextBox(c)
-	if c.Key then validKey.Event:Wait() end
-
-	local frame = Instance.new("Frame")
-	local textLabel = Instance.new("TextLabel")
-	local textBox = Instance.new("TextBox")
-
-	frame.Name = c.Text
-	frame.BackgroundTransparency = 1
-	frame.BorderSizePixel = 0
-	frame.Size = UDim2.new(1, 0, 0.2, 0)
-	frame.Parent = c.Tab
-
-	textBox.PlaceholderText = c.PlaceholderText
-	textBox.BackgroundColor3 = Color3.fromRGB(16, 16, 16)
-	textBox.BorderSizePixel = 0
-	textBox.Position = UDim2.new(0.75, 0, 0, 0)
-	textBox.Size = UDim2.new(0.25, 0, 1, 0)
-	textBox.Font = Enum.Font.SourceSans
-	textBox.Text = ""
-	textBox.TextColor3 = Color3.new(1, 1, 1)
-	textBox.TextScaled = true
-	textBox.Parent = frame
-
-	textLabel.Text = c.Text
-	textLabel.BackgroundColor3 = Color3.fromRGB(64, 64, 64)
-	textLabel.BorderSizePixel = 0
-	textLabel.Size = UDim2.new(0.75, 0, 1, 0)
-	textLabel.Font = Enum.Font.SourceSans
-	textLabel.TextColor3 = Color3.new(1, 1, 1)
-	textLabel.TextScaled = true
-	textLabel.Parent = frame
-
-	textBox.FocusLost:Connect(function()
-		if textBox.Text == "" then
-			if c.Default then
-				textBox.Text = c.Default
-				c.Callback(textBox.Text)
-			else
-				return
-			end
+		if #screenGui.Frame.TabSF:GetChildren() == 1 then 
+			tabButton.BackgroundColor3 = Color3.fromRGB(0, 128, 255)
 		else
-			c.Callback(textBox.Text)
+			tabButton.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
 		end
-	end)
-	return textLabel
-end
 
-function UI:CreateKeybind(c)
-	if c.Key then validKey.Event:Wait() end
-
-	local frame = Instance.new("Frame")
-	local textLabel = Instance.new("TextLabel")
-	local trigger = Instance.new("TextButton")
-	local cnxName = tostring(#cnx+1)
-	local keybind = c.DefaultKeybind
-	local boolean = true
-
-	frame.Name = c.Text
-	frame.BackgroundTransparency = 1
-	frame.BorderSizePixel = 0
-	frame.Size = UDim2.new(1, 0, 0.2, 0)
-	frame.Parent = c.Tab
-
-	trigger.Text = c.DefaultKeybind.Name
-	trigger.BackgroundColor3 = Color3.fromRGB(16, 16, 16)
-	trigger.BorderSizePixel = 0
-	trigger.Position = UDim2.new(0.75, 0, 0, 0)
-	trigger.AutoButtonColor = false
-	trigger.Size = UDim2.new(0.25, 0, 1, 0)
-	trigger.Font = Enum.Font.SourceSans
-	trigger.TextColor3 = Color3.new(1, 1, 1)
-	trigger.TextScaled = true
-	trigger.Parent = frame
-
-	textLabel.Name = c.Text
-	textLabel.Text = c.Text
-	textLabel.BackgroundColor3 = Color3.fromRGB(64, 64, 64)
-	textLabel.BorderSizePixel = 0
-	textLabel.Size = UDim2.new(0.75, 0, 1, 0)
-	textLabel.Font = Enum.Font.SourceSans
-	textLabel.TextColor3 = Color3.new(1, 1, 1)
-	textLabel.TextScaled = true
-	textLabel.Parent = frame
-
-	cnx[#cnx+1] = UIS.InputBegan:Connect(function(input)
-		if input.KeyCode == keybind then
-			if c.Toggle then
-				c.Callback(boolean)
-				boolean = not boolean
-			else
-				c.Callback()
+		tabButton.Name = n
+		tabButton.Text = n
+		tabButton.BorderSizePixel = 0
+		tabButton.AutoButtonColor = false
+		tabButton.Size = UDim2.new(1, 0, 0.2, 0)
+		tabButton.Font = Enum.Font.SourceSans
+		tabButton.TextColor3 = Color3.new(1, 1, 1)
+		tabButton.TextScaled = true
+		tabButton.MouseButton1Down:Connect(function()
+			if uipl.CurrentPage == sf then
+				sf.CanvasPosition = Vector2.new(0, 0)
 			end
-		end
-	end)
+			screenGui.Frame.Elements.UIPageLayout:JumpTo(sf)
+			settingsFrame.Visible = false
+			elemFrame.Visible = true
+			title.Text = Window.Name
+			settingsButton.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+			for _, v in ipairs(screenGui.Frame.TabSF:GetChildren()) do
+				if v:IsA("TextButton") and v ~= tabButton then
+					v.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+				else
+					tabButton.BackgroundColor3 = Color3.fromRGB(0, 128, 255)
+				end
+			end
+		end)
+		tabButton.Parent = screenGui.Frame.TabSF
 
-	trigger.MouseButton1Down:Connect(function()
-		if cnx[cnxName] then
-			return
-		else
-			trigger.Text = "..."
-			cnx[cnxName] = UIS.InputBegan:Connect(function(input)
-				if input.UserInputType == Enum.UserInputType.Keyboard then
-					cnx[cnxName]:Disconnect()
-					cnx[cnxName] = nil
-					trigger.Text = input.KeyCode.Name
-					task.wait()
-					keybind = input.KeyCode
-				elseif input.UserInputType == Enum.UserInputType.MouseButton2 then
-					cnx[cnxName]:Disconnect()
-					cnx[cnxName] = nil
-					trigger.Text = keybind.Name
+		sf.Name = n
+		sf.BackgroundTransparency = 1
+		sf.BorderSizePixel = 0
+		sf.Active = false
+		sf.AutomaticCanvasSize = Enum.AutomaticSize.Y
+		sf.Size = UDim2.new(1, 0, 1, 0)
+		sf.CanvasSize = UDim2.new(0, 0, 1, 0)
+		sf.ScrollBarThickness = 0
+		sf.ElasticBehavior = Enum.ElasticBehavior.Never
+		sf.ScrollingDirection = Enum.ScrollingDirection.Y
+		sf.Parent = screenGui.Frame.Elements
+
+		uill.SortOrder = Enum.SortOrder.LayoutOrder
+		uill.Parent = sf
+
+		function Tab:CreateButton(t)
+			local button = Instance.new("TextButton")
+
+			button.Text = t.Text
+			button.Name = t.Text
+			button.BackgroundColor3 = Color3.fromRGB(64, 64, 64)
+			button.AutoButtonColor = false
+			button.BorderSizePixel = 0
+			button.Size = UDim2.new(1, 0, 0.2, 0)
+			button.Font = Enum.Font.SourceSans
+			button.TextColor3 = Color3.new(1, 1, 1)
+			button.TextScaled = true
+			button.MouseButton1Down:Connect(t.Callback)
+			button.Parent = sf
+
+			function t:Set(s)
+				button.Text = s
+				button.Name = s
+			end
+			return t
+		end
+
+		function Tab:CreateToggle(t)
+			local toggle = Instance.new("TextButton")
+
+			toggle.Text = t.Text .. (t.CurrentValue and ": ON" or ": OFF")
+			toggle.Name = t.Text
+			toggle.AutoButtonColor = false
+			toggle.BackgroundColor3 = Color3.fromRGB(64, 64, 64)
+			toggle.BorderSizePixel = 0
+			toggle.Size = UDim2.new(1, 0, 0.2, 0)
+			toggle.Font = Enum.Font.SourceSans
+			toggle.TextColor3 = Color3.new(1, 1, 1)
+			toggle.TextScaled = true
+			toggle.MouseButton1Down:Connect(function()
+				t.CurrentValue = not t.CurrentValue
+				toggle.Text = toggle.Text:match("(.+): %u+$") .. (t.CurrentValue and ": ON" or ": OFF")
+				t.Callback(t.CurrentValue)
+			end)
+			toggle.Parent = sf
+
+
+			function t:Set(Value)
+				t.CurrentValue = Value
+				toggle.Text = toggle.Text:match("(.+): %u+$") .. (Value and ": ON" or ": OFF")
+				t.Callback(Value)
+			end
+			return t
+		end
+
+		function Tab:CreateTextBox(t)
+			local frame = Instance.new("Frame")
+			local textLabel = Instance.new("TextLabel")
+			local textBox = Instance.new("TextBox")
+
+			frame.Name = t.Text
+			frame.BackgroundTransparency = 1
+			frame.BorderSizePixel = 0
+			frame.Size = UDim2.new(1, 0, 0.2, 0)
+			frame.Parent = sf
+
+			textBox.PlaceholderText = t.PlaceholderText
+			textBox.BackgroundColor3 = Color3.fromRGB(16, 16, 16)
+			textBox.BorderSizePixel = 0
+			textBox.PlaceholderColor3 = Color3.fromRGB(128, 128, 128)
+			textBox.Position = UDim2.new(0.75, 0, 0, 0)
+			textBox.Size = UDim2.new(0.25, 0, 1, 0)
+			textBox.Font = Enum.Font.SourceSans
+			textBox.Text = ""
+			textBox.TextColor3 = Color3.new(1, 1, 1)
+			textBox.TextScaled = true
+			textBox.TextXAlignment = Enum.TextXAlignment.Center
+			textBox.Parent = frame
+
+			textLabel.Text = t.Text
+			textLabel.BackgroundColor3 = Color3.fromRGB(64, 64, 64)
+			textLabel.BorderSizePixel = 0
+			textLabel.Size = UDim2.new(0.75, 0, 1, 0)
+			textLabel.Font = Enum.Font.SourceSans
+			textLabel.TextColor3 = Color3.new(1, 1, 1)
+			textLabel.TextScaled = true
+			textLabel.Parent = frame
+
+			textBox.FocusLost:Connect(function()
+				if textBox.Text == "" then
+					return
+				else
+					t.CurrentValue = textBox.Text
+					t.Callback(textBox.Text)
+				end
+
+				if t.ClearTextOnFocusLost then
+					textBox.Text = ""
 				end
 			end)
+
+			function t:Set(text)
+				t.CurrentValue = text
+				textBox.Text = text
+				t.Callback(text)
+			end
+			return t
 		end
-	end)
-	return textLabel
+
+		function Tab:CreateKeybind(t)
+			local cnx
+			local frame = Instance.new("Frame")
+			local textLabel = Instance.new("TextLabel")
+			local trigger = Instance.new("TextButton")
+
+			frame.Name = t.Text
+			frame.BackgroundTransparency = 1
+			frame.BorderSizePixel = 0
+			frame.Size = UDim2.new(1, 0, 0.2, 0)
+			frame.Parent = sf
+
+			trigger.Text = t.CurrentKeybind
+			trigger.BackgroundColor3 = Color3.fromRGB(16, 16, 16)
+			trigger.BorderSizePixel = 0
+			trigger.Position = UDim2.new(0.75, 0, 0, 0)
+			trigger.AutoButtonColor = false
+			trigger.Size = UDim2.new(0.25, 0, 1, 0)
+			trigger.Font = Enum.Font.SourceSans
+			trigger.TextColor3 = Color3.new(1, 1, 1)
+			trigger.TextScaled = true
+			trigger.Parent = frame
+
+			textLabel.Name = t.Text
+			textLabel.Text = t.Text
+			textLabel.BackgroundColor3 = Color3.fromRGB(64, 64, 64)
+			textLabel.BorderSizePixel = 0
+			textLabel.Size = UDim2.new(0.75, 0, 1, 0)
+			textLabel.Font = Enum.Font.SourceSans
+			textLabel.TextColor3 = Color3.new(1, 1, 1)
+			textLabel.TextScaled = true
+			textLabel.Parent = frame
+
+			UserInputService.InputBegan:Connect(function(input)
+				if input.KeyCode == Enum.KeyCode[t.CurrentKeybind] then
+					t.Callback()
+				end
+			end)
+
+			trigger.MouseButton1Down:Connect(function()
+				if not cnx then
+					trigger.Text = "..."
+					cnx = UserInputService.InputBegan:Connect(function(input)
+						if input.UserInputType == Enum.UserInputType.Keyboard then
+							trigger.Text = input.KeyCode.Name
+							task.wait()
+							t.CurrentKeybind = input.KeyCode.Name
+							cnx:Disconnect()
+							cnx = nil
+						elseif input.UserInputType == Enum.UserInputType.MouseButton2 then
+							trigger.Text = t.CurrentKeybind
+						end
+					end)
+				end
+			end)
+
+			function t:Set(newKeybind)
+				t.CurrentKeybind = Enum.KeyCode[newKeybind].Name
+				trigger.Text = t.CurrentKeybind
+			end
+			return t
+		end
+		return Tab
+	end
+	return Window
 end
 
-return UI
+
+local Window = Aero:CreateWindow({
+	Name = "Window Name",
+	KeySystem = {
+		true,
+		Key = "MyKey1234",
+		Note = "Note"
+	}
+})
+
+local Tab = Window:CreateTab("Tab1")
+
+local Button = Tab:CreateButton({
+	Text = "Button",
+	Callback = function()
+		print(1)
+	end
+})
+
+local toggle = Tab:CreateToggle({
+	Text = "Toggle",
+	CurrentValue = true,
+	Callback = function(Value)
+		print("Toggle: ", Value)
+	end
+})
+
+local textBox = Tab:CreateTextBox({
+	Text = "TextBox",
+	CurrentValue = "",
+	ClearTextOnFocusLost = false,
+	PlaceholderText = "Text",
+	Callback = function(text)
+		game.Players.LocalPlayer.Character.Humanoid.WalkSpeed = tonumber(text)
+	end
+})
+
+local keybind = Tab:CreateKeybind({
+	Text = "Keybind",
+	CurrentKeybind = "F",
+	Callback = function()
+		print("Hello, World!")
+	end,
+})
+
+for i = 2, 100 do
+	Window:CreateTab("Tab" .. i)
+end
+
+Aero:Notify({
+	Title = "Title",
+	Text = 'Text',
+	Duration = 4,
+	Icon = "rbxasset://textures/loading/robloxlogo"
+})
+
+return Aero
