@@ -23,7 +23,10 @@ local Aero = loadstring(game:HttpGet("https://raw.githubusercontent.com/samerop/
 ```lua
 local Window = Aero:CreateWindow({
     Name = "Window Name",
-    Key = "MyKey1234" -- Optional
+    KeySystem = {
+        false, -- Key System enabled?
+        Key = "MyKey1234
+    }
 })
 ```
 ## Creating a Tab
